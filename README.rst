@@ -1,43 +1,76 @@
 Python wrapper for the SmartDoc 2015 - Challenge 1 Dataset
 ==========================================================
 
-Overview + Smartdoc URL (github dataset + original dataset)
-2 words about the dataset
+`The source for this project is available here <https://github.com/jchazalon/smartdoc15-ch1-pywrapper>`_.
 
 
-Important resources
--------------------
-Version, important URLS, etc.
+`The SmartDoc 2015 Challenge 1 dataset <http://smartdoc.univ-lr.fr/>`_ was originally created for the SmartDoc 2015 competition focusing on the evaluation of document image acquisition method using smartphones. The challenge 1, in particular, consisted in detecting and segmenting document regions in video frames extracted from the preview stream of a smartphone.
 
-`The source for this project is available here
-<https://github.com/jchazalon/smartdoc15-ch1-pywrapper>`_.
+This dataset was packaged in a new format and a python wrapper (this current package) was created to facilitate its usage.
 
-The version of the dataset used by this wrapper is:
-2.0.0 [TODO URL release]
+
+Dataset version
+---------------
+The version of the dataset used by this wrapper is: **2.0.0**.
+
+The source for the dataset is here: https://github.com/jchazalon/smartdoc15-ch1-dataset
 
 
 Sample usage
 ------------
+There are 3 tasks this Python package helps you to test your methods against, but first of all you have to properly install this package:
 
-- installation
-- Task 1: segmentation (workflow overview + commands)
-	- read dataset
-	- [opt. read models]
-	- [opt. train/test split + train]
-	- test
-	- eval
-- Task 2: model classification (workflow overview + commands)
-	- read dataset
-	- [opt. read models]
-	- [opt. train/test split + train]
-	- test
-	- eval
-- Task 3: model type classification (workflow overview + commands)
-	- read dataset
-	- [opt. read models]
-	- [opt. train/test split + train]
-	- test
-	- eval
+.. code:: console
+
+    pip install smartdoc_ch1
+
+A good practice is to install such package in a virtual environment.
+We recommend to use `Virtualenv Wrapper <http://virtualenvwrapper.readthedocs.org/>`_ to use virtual environments.
+
+
+Task 1: Segmentation
+''''''''''''''''''''
+**Segmentation**: this is the original task.
+    Inputs are video frames, and expected output is a composed of the coordinated of the four corners of the document image in each frame (top left, bottom left, bottom right and top right).
+    The evaluation is performed by computing the intersection over union ("IoU" or also "Jaccard index") of the expected document region and the found region. The tricky thing is that the coordinates are projected to the document referential in order to allow comparisons between different frames and different document models.
+    The original evaluation code is available at https://github.com/jchazalon/smartdoc15-ch1-eval, and the Python wrapper also contains an implementation using the new data format.
+
+    - read dataset
+    - [opt. read models]
+    - [opt. train/test split + train]
+    - test
+    - eval
+
+
+Task 2: Model classification
+''''''''''''''''''''''''''''
+**Model classification**: this is a new task.
+    Inputs are video frames, and expected output is the identifier of the document model represented in each frame.
+    There are 30 models named "datasheet001", "datasheet002", ..., "tax005".
+    The evaluation is performed as any multi-class classification task.
+
+    - read dataset
+    - [opt. read models]
+    - [opt. train/test split + train]
+    - test
+    - eval
+
+
+Task 3: Model type classification
+'''''''''''''''''''''''''''''''''
+**Model type classification**: this is a new task.
+    Inputs are video frames, and expected output is the identifier of the document model **type** represented in each frame.
+    There are 6 models types, each having 5 members, named "datasheet", "letter", "magazine", "paper", "patent" and "tax".
+    The evaluation is performed as any multi-class classification task.
+
+    - read dataset
+    - [opt. read models]
+    - [opt. train/test split + train]
+    - test
+    - eval
+
+Optional: Using model images
+''''''''''''''''''''''''''''
 
 
 
@@ -45,46 +78,50 @@ API
 ---
 TODO
 
-``load_sd15ch1_frames(data_home=None,
-                        sample=1.0,
-                        shuffle=False,
-                        random_state=0,
-                        download_if_missing=True,
-                        load_images=False,
-                        resize=None,
-                        color=False,
-                        with_model_classif_targets=True,
-                        with_modeltype_classif_targets=True,
-                        with_segmentation_targets=True,
-                        with_model_shapes=True,
-                        return_X_y=False,
-                        )``
+.. code:: Python
+    load_sd15ch1_frames(data_home=None,
+                            sample=1.0,
+                            shuffle=False,
+                            random_state=0,
+                            download_if_missing=True,
+                            load_images=False,
+                            resize=None,
+                            color=False,
+                            with_model_classif_targets=True,
+                            with_modeltype_classif_targets=True,
+                            with_segmentation_targets=True,
+                            with_model_shapes=True,
+                            return_X_y=False,
+                            )
 
 
-load_sd15ch1_models(data_home=None,
-                        download_if_missing=True,
-                        load_images=False,
-                        variant=MODEL_VARIANT_05_SCALED33,
-                        color=False,
-                        with_model_ids=True,
-                        with_modeltype_ids=True,
-                        return_X_y=False,
-                        )
+    load_sd15ch1_models(data_home=None,
+                            download_if_missing=True,
+                            load_images=False,
+                            variant=MODEL_VARIANT_05_SCALED33,
+                            color=False,
+                            with_model_ids=True,
+                            with_modeltype_ids=True,
+                            return_X_y=False,
+                            )
 
 
-read_sd15ch1_image(root_dir,
-                       image_relative_path,
-                       resize=None,
-                       color=False)
+    read_sd15ch1_image(root_dir,
+                           image_relative_path,
+                           resize=None,
+                           color=False)
 
-read_sd15ch1_images(root_dir,
-                        image_relative_path_seq,
-                        resize=None,
-                        color=False)
+    read_sd15ch1_images(root_dir,
+                            image_relative_path_seq,
+                            resize=None,
+                            color=False)
 
 
-TODO eval task1 / seg
+    TODO eval task1 / seg
 
-TODO eval task2 / mdl clf
+    TODO eval task2 / mdl clf
 
-TODO eval task3 / mdl type clf
+    TODO eval task3 / mdl type clf
+
+
+
