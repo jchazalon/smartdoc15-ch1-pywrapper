@@ -254,22 +254,6 @@ from skimage.io import imread
 from skimage.transform import resize as imresize, estimate_transform
 
 
-# Package specials
-################################################################################
-################################################################################
-__version__ = "0.1"
-__all__ = [
-    'load_sd15ch1_models',
-    'load_sd15ch1_frames',
-    'read_sd15ch1_images',
-    'read_sd15ch1_image',
-    'MODEL_VARIANT_01_ORIGINAL',
-    'MODEL_VARIANT_02_EDITED',
-    'MODEL_VARIANT_03_CAPTURED',
-    'MODEL_VARIANT_04_CORRECTED',
-    'MODEL_VARIANT_05_SCALED33',
-]
-
 # CONSTANTS
 ################################################################################
 ################################################################################
