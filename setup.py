@@ -4,6 +4,7 @@ from setuptools import setup, find_packages
 # To use a consistent encoding
 from codecs import open
 from os import path
+import re
 
 here = path.abspath(path.dirname(__file__))
 
@@ -11,9 +12,9 @@ here = path.abspath(path.dirname(__file__))
 with open(path.join(here, 'README.rst'), encoding='utf-8') as f:
     long_description = f.read()
 
-# Read the version from smartdo_ch1/__init__.py
+# Read the version from smartdoc_ch1/__init__.py
 def read(*parts):
-    with codecs.open(path.join(here, *parts), 'r') as fp:
+    with open(path.join(here, *parts), 'r') as fp:
         return fp.read()
 
 def find_version(*file_paths):

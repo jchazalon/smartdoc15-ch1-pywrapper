@@ -1,6 +1,6 @@
 
-# from __future__ import absolute_import
 
+# This is the place where the version is defined.
 __version__ = "0.1"
 
 from .smartdoc_loader  import (load_sd15ch1_frames, load_sd15ch1_models,
