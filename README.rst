@@ -78,7 +78,8 @@ API
 ---
 TODO
 
-.. code:: Python
+.. code:: python
+
     load_sd15ch1_frames(data_home=None,
                             sample=1.0,
                             shuffle=False,
@@ -94,7 +95,6 @@ TODO
                             return_X_y=False,
                             )
 
-
     load_sd15ch1_models(data_home=None,
                             download_if_missing=True,
                             load_images=False,
@@ -105,7 +105,6 @@ TODO
                             return_X_y=False,
                             )
 
-
     read_sd15ch1_image(root_dir,
                            image_relative_path,
                            resize=None,
@@ -115,13 +114,11 @@ TODO
                             image_relative_path_seq,
                             resize=None,
                             color=False)
-
-
+                            
     TODO eval task1 / seg
 
     TODO eval task2 / mdl clf
 
     TODO eval task3 / mdl type clf
-
 
 
