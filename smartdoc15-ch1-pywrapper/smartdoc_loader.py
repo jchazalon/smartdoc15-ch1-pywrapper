@@ -720,7 +720,7 @@ def __download_open_dataset(data_home=None, download_if_missing=True):
 # ???????????????
 # => separate module, separate dependencies?
 # requires polygon + tricks to avoid crossed polygons, etc.
-def segmentation_score_smartdoc2015(frame_coords, frame_coords_target, model_shapes):
+def segmentation_score_smartdoc2015(frame_coords, frame_coords_target, model_shapes, resize_factor=1.0):
     pass
 # // segmentation_score_smartdoc2015
 
