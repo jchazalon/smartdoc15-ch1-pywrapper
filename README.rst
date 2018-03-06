@@ -73,6 +73,25 @@ Optional: Using model images
 ''''''''''''''''''''''''''''
 
 
+Manual download option
+----------------------
+
+If you are behind a proxy, have a slow connexion or for any other reason, you may want to download the dataset manually instead of letting the Python wrapper do it for you.
+This is simple: just download the ``frames.tar.gz`` and ``models.tar.gz`` files from https://github.com/jchazalon/smartdoc15-ch1-dataset/releases to some local directory (we suggest to name it ``smartdoc_ch1_home``.
+Then, extract those archives to separate directories: 
+ 
+ - the content of ``frames.tar.gz`` should be extracted to a directory named ``frames``;
+ - the content of ``models.tar.gz`` should be extracted to a directory named ``models``.
+
+This can be achieved with the following commands:
+
+.. code:: console
+
+    tar -xzf PATH_TO_FRAMES.TAR.GZ -C PATH_TO_SMARTDOC_CH1_HOME/FRAMES
+    tar -xzf PATH_TO_MODELS.TAR.GZ -C PATH_TO_SMARTDOC_CH1_HOME/MODELS
+
+Then, make sure you specify ``data_home=PATH_TO_SMARTDOC_CH1_HOME`` and ``download_if_missing=False`` when you call the ``load_sd15ch1_frames`` and ``load_sd15ch1_models`` functions.
+
 
 API
 ---
