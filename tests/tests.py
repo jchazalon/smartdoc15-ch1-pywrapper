@@ -8,7 +8,7 @@ Tests for the python wrapper for the SmartDoc2015-Challenge 1 dataset and tools.
 How to run
 ----------
 Run this script as a module:
-    python -m pip_package.tests
+    python -m tests.tests
 
 """
 from __future__ import division, absolute_import, print_function
@@ -21,11 +21,11 @@ import shutil
 
 
 try:
-    from .smartdoc_loader  import load_sd15ch1_frames, load_sd15ch1_models, \
+    from ..smartdoc_loader  import load_sd15ch1_frames, load_sd15ch1_models, \
         MODEL_VARIANT_01_ORIGINAL, MODEL_VARIANT_02_EDITED, MODEL_VARIANT_03_CAPTURED, \
         MODEL_VARIANT_04_CORRECTED, MODEL_VARIANT_05_SCALED33
 except ValueError:
-    print("You must run this script as a module:\n\tpython -m pip_package.tests\n")
+    print("You must run this script as a module:\n\tpython -m tests.tests\n")
     raise
 
 
