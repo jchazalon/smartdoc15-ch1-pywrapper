@@ -26,7 +26,7 @@ setup(
     # There are some restrictions on what makes a valid project name
     # specification here:
     # https://packaging.python.org/specifications/core-metadata/#name
-    name='smartdoc15-ch1-pywrapper',  # Required
+    name='smartdoc15_ch1',  # Required
 
     # Versions should comply with PEP 440:
     # https://www.python.org/dev/peps/pep-0440/
@@ -51,6 +51,9 @@ setup(
     # https://packaging.python.org/specifications/core-metadata/#description-optional
     long_description=long_description,  # Optional
 
+    # New content type specification for pipy.org to correctly display the long description
+    long_description_content_type = 'text/x-rst; charset=UTF-8',
+
     # This should be a valid link to your project's main homepage.
     #
     # This field corresponds to the "Home-Page" metadata field:
@@ -63,7 +66,7 @@ setup(
 
     # This should be a valid email address corresponding to the author listed
     # above.
-    author_email='joseph.chazalon (at) univ-lr.fr',  # Optional
+    author_email='joseph.chazalon@univ-lr.fr',  # Optional
 
     # Classifiers help users find your project by categorizing it.
     #
@@ -189,6 +192,6 @@ setup(
         'Dataset (original)': 'https://sites.google.com/site/icdar15smartdoc/',
     },
 
-
+    # Licence for setuptools
     license="MIT",
 )
