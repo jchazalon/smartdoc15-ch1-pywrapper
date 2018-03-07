@@ -12,10 +12,13 @@ import unittest
 import os
 import shutil
 
+import numpy as np
 
-from smartdoc2015_ch1  import load_sd15ch1_frames, load_sd15ch1_models, \
-    MODEL_VARIANT_01_ORIGINAL, MODEL_VARIANT_02_EDITED, MODEL_VARIANT_03_CAPTURED, \
-    MODEL_VARIANT_04_CORRECTED, MODEL_VARIANT_05_SCALED33
+
+from smartdoc2015_ch1  import (load_sd15ch1_frames, load_sd15ch1_models,
+    MODEL_VARIANT_01_ORIGINAL, MODEL_VARIANT_02_EDITED, MODEL_VARIANT_03_CAPTURED,
+    MODEL_VARIANT_04_CORRECTED, MODEL_VARIANT_05_SCALED33, eval_sd15ch1_segmentations,
+    eval_sd15ch1_classifications, get_sd15ch1_basedir_frames, get_sd15ch1_basedir_models)
 
 
 class Sd15LoaderTestCases(unittest.TestCase):
@@ -145,6 +148,34 @@ class Sd15LoaderTestCases(unittest.TestCase):
                     load_images=False,
                     variant=variant,
                     color=False)
+    
+
+    def test_eval_seg_gt_1(self):
+        resize_factor = 0.5
+
+        data = load_sd15ch1_frames(data_home=self.tmpdir,
+                        sample=0.01,
+                        shuffle=True,
+                        resize=resize_factor,
+                        with_model_classif_targets=False,
+                        with_modeltype_classif_targets=False,
+                        with_segmentation_targets=True,
+                        with_model_shapes=True,
+                        return_X_y=False)
+
+        evalres = eval_sd15ch1_segmentations(
+            data.target_segmentations, 
+            data.target_segmentations,
+            data.model_shapes,
+            frame_resize_factor=resize_factor)
+
+        self.assertTrue(np.allclose(
+            evalres,
+            np.ones_like(evalres)))
+
+
+
+
 
 if __name__ == '__main__':
     unittest.main()
