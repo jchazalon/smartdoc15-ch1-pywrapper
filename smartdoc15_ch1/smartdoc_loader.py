@@ -242,6 +242,7 @@ Example of header + a random line:
 ################################################################################
 from __future__ import division, absolute_import, print_function
 import six
+from six.moves import range
 
 import os
 import tarfile
@@ -252,6 +253,9 @@ from sklearn.datasets.base import get_data_home, _fetch_remote, RemoteFileMetada
 from sklearn.utils import Bunch, check_random_state
 from skimage.io import imread
 from skimage.transform import resize as imresize, estimate_transform
+import Polygon
+
+from .poly_utils import isSelfIntersecting
 
 
 # CONSTANTS
@@ -698,40 +702,129 @@ def __download_open_dataset(data_home=None, download_if_missing=True):
 
 
 
-# Evaluation for the segmentation task
+# Evaluation
 # ------------------------------------------------------------------------------
 
-# ???????????????
-# => separate module, separate dependencies?
-# requires polygon + tricks to avoid crossed polygons, etc.
-def segmentation_score_smartdoc2015(frame_coords, frame_coords_target, model_shapes, resize_factor=1.0):
-    pass
-# // segmentation_score_smartdoc2015
+def eval_sd15ch1_segmentations(segmentations, target_segmentations, model_shapes, frame_resize_factor=1.0, print_summary=False):
+    # frame_resize_factor it the value of the resize factor applied to the frames. 
+    # It will be inverted to recover the correct coordinates.
+
+    # First check everything has the right type and shape
+    # TODO check types
+    seg_shape = segmentations.shape
+    if len(seg_shape) != 2 or seg_shape[1] != 8:
+        __err("eval_sd15ch1_segmentations: segmentations parameter "
+              "must be a numpy array of shape (NUM_FRAMES, 8).",
+              ValueError)
+    tarseg_shape = target_segmentations.shape
+    if len(seg_shape) != 2 or seg_shape[1] != 8:
+        __err("eval_sd15ch1_segmentations: target_segmentations parameter "
+              "must be a numpy array of shape (NUM_FRAMES, 8).",
+              ValueError)
+    mdlshapes_shape = model_shapes.shape
+    if len(mdlshapes_shape) != 2 or mdlshapes_shape[1] != 2:
+        __err("eval_sd15ch1_segmentations: model_shapes parameter "
+              "must be a numpy array of shape (NUM_FRAMES, 2).",
+              ValueError)
+    num_frames = seg_shape[0]
+    if tarseg_shape[0] != num_frames or mdlshapes_shape[0] != num_frames:
+        __err("eval_sd15ch1_segmentations: 'segmentations', 'target_segmentations' and 'model_shapes' parameters "
+              "must all have the same dimension on axis 0 (number of frames).", 
+              ValueError)
+
+    # Scale coordinates back to original frame size
+    segmentations_scaled = segmentations / frame_resize_factor
+
+    # Evaluate the segmentation for each frame result
+    eval_result = np.zeros((num_frames))
+    for ii in range(num_frames):
+        # Warp coordinates so each pixel represents the same physical surface
+        # in the real plane of the document object
+        # point order: top-left, bottom-left, bottom-right, top-right
+        # referential: x+ toward right, y+ toward down
+        # witdh = object original size left to right
+        # height = object original size top to bottom
+        found_obj_coordinates_frame = segmentations[ii].reshape((-1, 2))
+        true_obj_coordinates_frame = target_segmentations[ii].reshape((-1, 2))
+        true_obj_width_real, true_obj_height_real = model_shapes[ii]
+        true_obj_coordinates_real = np.array([[0, 0],
+                                              [0, true_obj_height_real],
+                                              [true_obj_width_real, true_obj_height_real],
+                                              [true_obj_width_real, 0]])
+        tform = estimate_transform('projective', true_obj_coordinates_frame, true_obj_coordinates_real)
+        found_obj_coordinates_real = tform(found_obj_coordinates_frame)
+
+        # Compute IoU
+        poly_target = Polygon.Polygon(true_obj_coordinates_real)  #.reshape(-1,2))
+        poly_test = Polygon.Polygon(found_obj_coordinates_real)  #.reshape(-1,2))
+        poly_inter = None
+
+        area_target = area_test = area_inter = area_union = 0.0
+        # (sadly, we must check for self-intersecting polygons which mess the interection computation)
+        if isSelfIntersecting(poly_target):
+            __err("eval_sd15ch1_segmentations: target_segmentations[%d]: ground truth coordinates are not in right order "
+                  "(the resulting polygon is self intersecting). Cannot compute overlap. Aborting." % (ii,),
+                  ValueError)
+
+        area_target = poly_target.area()
+        
+        if area_target < 0.0000000001:
+            __err("eval_sd15ch1_segmentations: target_segmentations[%d]: ground truth coordinates form a "
+                  "polygon degenerated to one point. Cannot compute overlap. Aborting." % (ii,),
+                  ValueError)
+
+        if isSelfIntersecting(poly_test):
+            __warn("eval_sd15ch1_segmentations: segmentation[%d]: segmentation coordinates are not in right order "
+                   "(the resulting polygon is self intersecting). Overlap assumed to be 0." % (ii,))
+        else :
+            poly_inter = poly_target & poly_test
+            # Polygon.IO.writeSVG('_tmp/polys-%03d.svg'%fidx, [poly_target, poly_test, poly_inter]) # dbg
+            # poly_inter should not self-intersect, but may have more than 1 contour
+            area_test = poly_test.area()
+            area_inter = poly_inter.area()
+
+            # Little hack to cope with float precision issues when dealing with polygons:
+            #   If intersection area is close enough to target area or GT area, but slighlty >,
+            #   then fix it, assuming it is due to rounding issues.
+            area_min = min(area_target, area_test)
+            if area_min < area_inter and area_min * 1.0000000001 > area_inter :
+                area_inter = area_min
+                # __warn("Capping area_inter.")
+            
+        area_union = area_test + area_target - area_inter
+        jaccard_index = area_inter / area_union
+        eval_result[ii] = jaccard_index
+
+    # Print summary if asked
+    if print_summary:
+        try:
+            import scipy.stats
+        except ImportError:
+            __warn("eval_sd15ch1_segmentations: cannot import scipy.stats. Print summary deactivated. "
+                   "Please install scipy to enable it.")
+        else:
+            values = eval_result
+            # nobs, minmax, mean, variance, skewness, kurtosis = stats.describe(values)
+            desc_res = scipy.stats.describe(values)
+            std = np.sqrt(desc_res.variance)
+            cil, cih = scipy.stats.norm.interval(0.95,loc=desc_res.mean,scale=std/np.sqrt(len(values)))
+
+            __info("eval_sd15ch1_segmentations: ----------------------------------------------")
+            __info("eval_sd15ch1_segmentations: Evaluation report")
+            __info("eval_sd15ch1_segmentations: ----------------------------------------------")
+            __info("eval_sd15ch1_segmentations: observations: %5d" % (desc_res.nobs, ))
+            __info("eval_sd15ch1_segmentations: mean:         %8.2f (CI@95%%: %.3f, %.3f)" % (desc_res.mean, cil, cih))
+            __info("eval_sd15ch1_segmentations: min-max:          %.3f - %.3f" % desc_res.minmax)
+            __info("eval_sd15ch1_segmentations: variance:         %.3f (std: %.3f)" % (desc_res.variance, std))
+            __info("eval_sd15ch1_segmentations: ----------------------------------------------")
+
+    # return IoU output
+    return eval_result
 
 
-# Coordinate conversion (polygon x frameid --> dewarped polygon)
-# http://scikit-image.org/docs/stable/api/skimage.transform.html#estimate-transform
-# http://scikit-image.org/docs/dev/api/skimage.transform.html#skimage.transform.ProjectiveTransform
-# or OpenCV getPerspectiveTransform
-def convert_coordinates_frame_to_model(true_model_coordinates, model_width, model_height, frame_coordinates):
-    # point order: top-left, bottom-left, bottom-right, top-right
-    # referential: x+ toward right, y+ toward down
-    # witdh = object original size left to right
-    # height = object original size top to bottom
-    if true_model_coordinates.shape != (4, 2):
-        # error bad shape
-        __err("true_model_coordinates should have a (4,2) shape, "
-                         "but actual parameter has a %s shape."
-                         % str(true_model_coordinates.shape),
-                         ValueError)
-    target_object_coord = np.array([[0, 0],
-                                    [0, model_height],
-                                    [model_width, model_height],
-                                    [model_width, 0]])
-    tform = estimate_transform('projective', true_model_coordinates, target_object_coord)
-    return tform(frame_coordinates)
-# // convert_coordinates_frame_to_model
-
-
+def eval_sd15ch1_classifications(labels, target_labels):
+    # TODO doc
+    # TODO forward to sklearn classifier accuracy evaluation?
+    raise NotImplementedError("eval_sd15ch1_classifications: Not implemented yet.")
 
 
