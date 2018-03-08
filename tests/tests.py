@@ -23,24 +23,30 @@ from smartdoc15_ch1  import (load_sd15ch1_frames, load_sd15ch1_models,
 
 class Sd15LoaderTestCases(unittest.TestCase):
     tmpdir = "/tmp/testsd15/"
-    def __clean_tmpdir(self):
-        shutil.rmtree(self.tmpdir, ignore_errors=True)
-        os.makedirs(self.tmpdir)
+    noneexistent = "/tmp/testsd15-nocreate/"
 
-    def setUp(self):
-        self.__clean_tmpdir()
+    @classmethod
+    def __clean_tmpdir(cls):
+        shutil.rmtree(cls.tmpdir, ignore_errors=True)
+        os.makedirs(cls.tmpdir)
+        shutil.rmtree(cls.noneexistent, ignore_errors=True)
 
-    def tearDown(self):
-        self.__clean_tmpdir()
+    @classmethod
+    def setUpClass(cls):
+        cls.__clean_tmpdir()
+
+    @classmethod
+    def tearDownClass(cls):
+        cls.__clean_tmpdir()
 
 
     def test_lf_download_if_missing_false(self):
         with self.assertRaises(IOError):
-            load_sd15ch1_frames(data_home=self.tmpdir,
+            load_sd15ch1_frames(data_home=self.noneexistent,
                             download_if_missing=False)
 
 
-    def test_lf_default(self):
+    def test_lf_default(self):  # this one downloads and caches everything
         load_sd15ch1_frames(data_home=self.tmpdir)
 
 
