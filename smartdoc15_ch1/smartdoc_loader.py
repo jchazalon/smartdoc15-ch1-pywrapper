@@ -624,13 +624,13 @@ def read_sd15ch1_images(root_dir,
 
 # Helpers needed when loading images manually with read_sd15ch_image{,s} functions
 # ------------------------------------------------------------------------------
-def get_sd15ch1_basedir_frames(data_home=None)
+def get_sd15ch1_basedir_frames(data_home=None):
     data_home = get_data_home(data_home=data_home)
     sd15ch1_home = os.path.join(data_home, SD15CH1_DIRNAME)
     basedir = os.path.join(sd15ch1_home, "frames")
     return basedir
 
-def get_sd15ch1_basedir_models(data_home=None)
+def get_sd15ch1_basedir_models(data_home=None):
     data_home = get_data_home(data_home=data_home)
     sd15ch1_home = os.path.join(data_home, SD15CH1_DIRNAME)
     basedir = os.path.join(sd15ch1_home, "models")
