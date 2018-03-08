@@ -234,8 +234,8 @@ Example of header + a random line:
     02-edited,paper005,19,paper,3,4,02-edited/paper005.png
 
 """
-# Copyright (c) 2015 Joseph Chazalon, Marçal Rusiñol
-# License: CC-BY-4.0
+# Copyright (c) 2018 Joseph Chazalon
+# License: MIT
 
 # IMPORT
 ################################################################################
