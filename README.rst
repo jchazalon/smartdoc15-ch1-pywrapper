@@ -134,10 +134,16 @@ TODO
                             resize=None,
                             color=False)
                             
-    TODO eval task1 / seg
+    get_sd15ch1_basedir_frames(data_home=None)
 
-    TODO eval task2 / mdl clf
+    get_sd15ch1_basedir_models(data_home=None)
 
-    TODO eval task3 / mdl type clf
+    eval_sd15ch1_segmentations(segmentations, 
+                               target_segmentations, 
+                               model_shapes, 
+                               frame_resize_factor=1.0, 
+                               print_summary=False)
+
+    eval_sd15ch1_classifications(labels, target_labels)
 
 
