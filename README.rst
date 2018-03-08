@@ -77,27 +77,38 @@ Manual download option
 ----------------------
 
 If you are behind a proxy, have a slow connexion or for any other reason, you may want to download the dataset manually instead of letting the Python wrapper do it for you.
-This is simple: just download the ``frames.tar.gz`` and ``models.tar.gz`` files from https://github.com/jchazalon/smartdoc15-ch1-dataset/releases to some local directory (we suggest to name it ``smartdoc_ch1_home``.
-Then, extract those archives to separate directories: 
- 
- - the content of ``frames.tar.gz`` should be extracted to a directory named ``frames``;
- - the content of ``models.tar.gz`` should be extracted to a directory named ``models``.
+This is simple: 
 
-This can be achieved with the following commands:
-
+ 1. download the ``frames.tar.gz`` and ``models.tar.gz`` files from https://github.com/jchazalon/smartdoc15-ch1-dataset/releases to some local directory;
+ 2. choose where you want to store the files and manually create the file hierarchy (the ``smartdoc_ch1_home`` intermediate directory is important here):
 .. code:: console
 
-    tar -xzf PATH_TO_FRAMES.TAR.GZ -C PATH_TO_SMARTDOC_CH1_HOME/FRAMES
-    tar -xzf PATH_TO_MODELS.TAR.GZ -C PATH_TO_SMARTDOC_CH1_HOME/MODELS
+    mkdir -p PATH_TO_STORAGE_DIR/smartdoc_ch1_home/frames
+    mkdir -p PATH_TO_STORAGE_DIR/smartdoc_ch1_home/models
+ 
+ 3. extract the archives to their target directories:
+.. code:: console
 
-Then, make sure you specify ``data_home=PATH_TO_SMARTDOC_CH1_HOME`` and ``download_if_missing=False`` when you call the ``load_sd15ch1_frames`` and ``load_sd15ch1_models`` functions.
+    tar -xzf PATH_TO_FRAMES.TAR.GZ -C PATH_TO_STORAGE_DIR/smartdoc_ch1_home/frames
+    tar -xzf PATH_TO_MODELS.TAR.GZ -C PATH_TO_STORAGE_DIR/smartdoc_ch1_home/models
+
+Then, make sure you specify ``data_home=PATH_TO_STORAGE_DIR`` and ``download_if_missing=False`` when you call the ``load_sd15ch1_frames`` and ``load_sd15ch1_models`` functions. The functions ``get_sd15ch1_basedir_frames`` and
+``get_sd15ch1_basedir_models``also require that you specify ``data_home=PATH_TO_STORAGE_DIR``.
+
+By default, the path to local dataset storage complies with Scikit-learn standard location: ``PATH_TO_STORAGE_DIR=~/scikit_learn_data``
 
 
 API
 ---
-TODO
+TODO DOC
 
 .. code:: python
+
+    MODEL_VARIANT_01_ORIGINAL = "01-original"
+    MODEL_VARIANT_02_EDITED = "02-edited"
+    MODEL_VARIANT_03_CAPTURED = "03-captured-nexus"
+    MODEL_VARIANT_04_CORRECTED = "04-corrected-nexus"
+    MODEL_VARIANT_05_SCALED33 = "05-corrected-nexus-scaled33"
 
     load_sd15ch1_frames(data_home=None,
                             sample=1.0,
@@ -144,6 +155,7 @@ TODO
                                frame_resize_factor=1.0, 
                                print_summary=False)
 
-    eval_sd15ch1_classifications(labels, target_labels)
+    eval_sd15ch1_classifications(labels, 
+                                 target_labels)
 
 
