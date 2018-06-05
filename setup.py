@@ -82,7 +82,7 @@ setup(
 
     # This should be a valid email address corresponding to the author listed
     # above.
-    author_email='joseph.chazalon@univ-lr.fr',  # Optional
+    author_email='joseph.chazalon@lrde.epita.fr',  # Optional
 
     # Classifiers help users find your project by categorizing it.
     #
