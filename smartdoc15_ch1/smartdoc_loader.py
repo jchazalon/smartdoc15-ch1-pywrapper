@@ -759,7 +759,7 @@ def eval_sd15ch1_segmentations(segmentations, target_segmentations, model_shapes
         # referential: x+ toward right, y+ toward down
         # witdh = object original size left to right
         # height = object original size top to bottom
-        found_obj_coordinates_frame = segmentations[ii].reshape((-1, 2))
+        found_obj_coordinates_frame = segmentations_scaled[ii].reshape((-1, 2))
         true_obj_coordinates_frame = target_segmentations[ii].reshape((-1, 2))
         true_obj_width_real, true_obj_height_real = model_shapes[ii]
         true_obj_coordinates_real = np.array([[0, 0],
