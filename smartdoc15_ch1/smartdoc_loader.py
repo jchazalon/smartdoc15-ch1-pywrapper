@@ -166,7 +166,7 @@ Example of header + a random line:
     background01,0,datasheet001,0,datasheet,0,0,background01/datasheet001/frame_0001.jpeg,1,2100.0,2970.0,698.087,200.476,692.141,891.077,1253.18,869.656,1178.15,191.515
 
 
-Archive format for model
+Archive format for models
 -------------------------
 Please see the internal README.md file for more details.
 
@@ -198,8 +198,8 @@ The file hierarchy of this archive is:
         ├── [...]
         └── tax005.png
 
-Metadata format for model
--------------------------
+Metadata format for models
+--------------------------
 The metadata file is a CSV file (separator: `,`, string quoting: None).
 It is safe to split on `,` tokens as they do not appear elsewhere in this file.
 Each row describes a model image.
