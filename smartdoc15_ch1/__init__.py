@@ -1,7 +1,11 @@
 
 
 # This is the place where the version is defined.
-__version__ = "0.5"
+__version__ = "0.7"
+
+
+from .smartdoc_loader_v2 import Dataset, Models
+from .evaluation import evaluate_segmentation
 
 from .smartdoc_loader  import (load_sd15ch1_frames, load_sd15ch1_models,
     MODEL_VARIANT_01_ORIGINAL, MODEL_VARIANT_02_EDITED, MODEL_VARIANT_03_CAPTURED,
@@ -9,8 +13,16 @@ from .smartdoc_loader  import (load_sd15ch1_frames, load_sd15ch1_models,
     eval_sd15ch1_classifications, get_sd15ch1_basedir_frames, get_sd15ch1_basedir_models)
 
 __all__ = [
+    # V2
+    'Dataset',
+    'Models',
+    'evaluate_segmentation',
+    # V1
+    'load_sd15ch1_frames',
     'load_sd15ch1_frames',
     'load_sd15ch1_models',
+    'read_sd15ch1_image',
+    'read_sd15ch1_images',
     'MODEL_VARIANT_01_ORIGINAL',
     'MODEL_VARIANT_02_EDITED',
     'MODEL_VARIANT_03_CAPTURED',
