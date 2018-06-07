@@ -10,6 +10,7 @@ from six.moves import range
 
 import numpy as np
 from skimage.transform import estimate_transform
+from sklearn import metrics
 import Polygon
 
 from .poly_utils import isSelfIntersecting
@@ -148,9 +149,44 @@ def evaluate_segmentation(segmentation_results, target_segmentations, model_shap
     return eval_result
 
 
-def eval_sd15ch1_classifications(labels, target_labels):
+def evaluate_classification(predicted_labels, target_labels, label_names=None, print_summary=False):
+    '''
+    Evaluates the performance of a classification task (applicable for tasks 2 and 3).
+
+    This is a generic function and users have to provide the appropriate target labels (opt. names)
+    as a parameter. This enables them to use this function even if they sub-sampled the dataset.
+
+    This evaluation function is provided for the sake of completeness, as it provides a limited view of 
+    the results.
+
+    Parameters:
+    -----------
+    predicted_labels: numpy.array, 1 dimension, contains integers
+        Labels returned by the method under evaluation, encoded as integers.
+
+    Returns:
+    --------
+    mean_accuracy, confusion_matrix: tuple of (float, numpy.array)
+        - mean_accuracy is the sum of correct results (label == target_label) divided by the number
+          of values.
+        - confusion_matrix is the confusion matrix of the prediction, as return by 
+          `sklearn.metrics.confusion_matrix`. Rows are target values, columns indicate predicted 
+          values.
+
+    Notes:
+    ------
+    If `print_summary` is True, then detailed statistics are printed.
+    '''
     # TODO doc
     # TODO forward to sklearn classifier accuracy evaluation?
-    raise NotImplementedError("eval_sd15ch1_classifications: Not implemented yet.")
+
+    if print_summary:
+        print(metrics.classification_report(target_labels, predicted_labels,
+                target_names=label_names))
+
+    mean_accuracy = np.mean(predicted_labels == target_labels)
+    confusion_matrix = metrics.confusion_matrix(target_labels, predicted_labels)
+
+    return mean_accuracy, confusion_matrix
 
 

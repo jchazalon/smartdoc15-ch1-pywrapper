@@ -507,8 +507,11 @@ class Dataset(list, SimpleLoggerTrait):
             self.append(Frame(dfi_dict))
         
         self._unique_background_ids = None
+        self._unique_background_names = None
         self._unique_model_ids = None
+        self._unique_model_names = None
         self._unique_modeltype_ids = None
+        self._unique_modeltype_names = None
 
     @property
     def scale_factor(self):
@@ -538,17 +541,35 @@ class Dataset(list, SimpleLoggerTrait):
         return self._rawdata
 
     @property
+    def unique_background_names(self):
+        if self._unique_background_names is None:
+            self._unique_background_names = self._rawdata['bg_name'].unique()
+            self._unique_background_names.sort()
+        return self._unique_background_names
+    @property
     def unique_background_ids(self):
         if self._unique_background_ids is None:
             self._unique_background_ids = self._rawdata['bg_id'].unique()
             self._unique_background_ids.sort()
         return self._unique_background_ids
     @property
+    def unique_model_names(self):
+        if self._unique_model_names is None:
+            self._unique_model_names = self._rawdata['model_name'].unique()
+            self._unique_model_names.sort()
+        return self._unique_model_names
+    @property
     def unique_model_ids(self):
         if self._unique_model_ids is None:
             self._unique_model_ids = self._rawdata['model_id'].unique()
             self._unique_model_ids.sort()
         return self._unique_model_ids
+    @property
+    def unique_modeltype_names(self):
+        if self._unique_modeltype_names is None:
+            self._unique_modeltype_names = self._rawdata['modeltype_name'].unique()
+            self._unique_modeltype_names.sort()
+        return self._unique_modeltype_names
     @property
     def unique_modeltype_ids(self):
         if self._unique_modeltype_ids is None:
@@ -624,7 +645,9 @@ class Models(list, SimpleLoggerTrait):
             self.append(Model(mdli_dict))
             
         self._unique_model_ids = None
+        self._unique_model_names = None
         self._unique_modeltype_ids = None
+        self._unique_modeltype_names = None
 
             
     @property
@@ -639,11 +662,23 @@ class Models(list, SimpleLoggerTrait):
         return np.array(self._rawdata["modeltype_id"])
 
     @property
+    def unique_model_names(self):
+        if self._unique_model_names is None:
+            self._unique_model_names = self._rawdata['model_name'].unique()
+            self._unique_model_names.sort()
+        return self._unique_model_names
+    @property
     def unique_model_ids(self):
         if self._unique_model_ids is None:
             self._unique_model_ids = self._rawdata['model_id'].unique()
             self._unique_model_ids.sort()
         return self._unique_model_ids
+    @property
+    def unique_modeltype_names(self):
+        if self._unique_modeltype_names is None:
+            self._unique_modeltype_names = self._rawdata['modeltype_name'].unique()
+            self._unique_modeltype_names.sort()
+        return self._unique_modeltype_names
     @property
     def unique_modeltype_ids(self):
         if self._unique_modeltype_ids is None:
