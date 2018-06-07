@@ -34,7 +34,13 @@ def evaluate_segmentation(segmentation_results, target_segmentations, model_shap
 
     # First check everything has the right type and shape
     # TODO check types
-    # TODO accept dict of str: float or int as input as well for segmentation_results
+    # TODO accept :
+    # - list of list of floats or int
+    # - dict of str: float or int as input as well for segmentation_results
+    # - array 2D (dim = n*8)
+
+    if type(segmentation_results) == list:
+        segmentation_results = np.array(segmentation_results)
 
     seg_shape = segmentation_results.shape
     if len(seg_shape) != 2 or seg_shape[1] != 8:

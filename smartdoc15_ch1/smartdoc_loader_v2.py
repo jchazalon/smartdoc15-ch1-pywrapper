@@ -392,7 +392,7 @@ def _read_image(full_path, color=False, scale_factor=None):
             print(msg)
             raise ValueError(msg)
         final_scale_factor = float(scale_factor)
-    print("Loading image '%s'." % full_path)
+    # print("Loading image '%s'." % full_path)
     img = imread(full_path, as_gray=(not color))
     # Checks if jpeg reading worked. Refer to skimage issue #3594 for more details.
     if img.ndim is 0:
@@ -441,6 +441,7 @@ class Frame(dict, SimpleLoggerTrait):
     def __init__(self, value_dict):
         dict.__init__(self, value_dict)
         # This object should be unmutable, we could overwrite __setitem__ to raise an error
+   
     def read_image(self, color=False, force_scale_factor=None):
         final_scale_factor = None
         if force_scale_factor is not None:
@@ -454,17 +455,36 @@ class Frame(dict, SimpleLoggerTrait):
         real_path = self["image_path_absolute"]
 
         return _read_image(real_path, color, final_scale_factor)
+
     @property
-    def scaled_segmentation(self):
+    def segmentation_dict(self):
         segmentation = {
                 k: self[k]
                 for k in 
                 ["tl_x", "tl_y", "bl_x", "bl_y", "br_x", "br_y", "tr_x", "tr_y"]
             }
+        return segmentation
+    
+    @property
+    def segmentation_dict_scaled(self):
+        segmentation = self.segmentation_dict
         if self["_scale_factor"] is not None:
             segmentation = {k: v*self["_scale_factor"] for k, v in six.iteritems(segmentation)}
         return segmentation
-
+    
+    @property
+    def segmentation_list(self):
+        return [self[k]
+                for k in 
+                ["tl_x", "tl_y", "bl_x", "bl_y", "br_x", "br_y", "tr_x", "tr_y"]]
+    
+    @property
+    def segmentation_list_scaled(self):
+        segmentation = self.segmentation_list
+        if self["_scale_factor"] is not None:
+            segmentation = list(np.array(segmentation_list) * self["_scale_factor"])
+        return segmentation
+    
 
 class Dataset(list, SimpleLoggerTrait):
     def __init__(self, 
@@ -576,6 +596,10 @@ class Dataset(list, SimpleLoggerTrait):
             self._unique_modeltype_ids = self._rawdata['modeltype_id'].unique()
             self._unique_modeltype_ids.sort()
         return self._unique_modeltype_ids
+
+    def iter_frame_images(self, color=False, force_scale_factor=None):
+        for frame in self:
+            yield frame.read_image(color, force_scale_factor)
 
 
 class Model(dict, SimpleLoggerTrait):
