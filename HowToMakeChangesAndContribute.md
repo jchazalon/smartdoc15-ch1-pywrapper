@@ -11,11 +11,13 @@ Setting up virtual environments
 -------------------------------
 We recommend to use [Virtualenv wrapper](http://virtualenvwrapper.readthedocs.org/) to set up a virtual environment you can safely work on.
 Once Virtualenv wrapper is properly set up, you can create a test environment using:
+
     mkvirtualenv --system-site-packages sd15ch1_dev
 
 Installing smartdoc15_ch1 in editable mode
 ------------------------------------------
 You should clone the code repository and install the package from its sources.
+
     cd MY_WORKSPACE_DIRECTORY
     git clone https://github.com/jchazalon/smartdoc15-ch1-pywrapper.git 
     cd smartdoc15-ch1-pywrapper
