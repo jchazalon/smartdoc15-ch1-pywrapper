@@ -381,7 +381,7 @@ def _ensure_dataset_is_downloaded(sd15ch1_home, download_if_missing):
             os.remove(archive_path)
             # Touch indicator file
             with open(install_successful_filename, 'a'):
-                os.utime(install_successful_filename)
+                os.utime(install_successful_filename, times=None)
 
 
 def _read_image(full_path, color=False, scale_factor=None):
@@ -407,6 +407,8 @@ def _read_image(full_path, color=False, scale_factor=None):
         h = int(final_scale_factor * h)
         w = int(final_scale_factor * w)
         img = imresize(img, (h, w))
+    if not color:  # skimage.io.imread returns [0-1] float64 images when as_gray is True
+        img = np.uint8(img * 255)
     return img
 
 
@@ -490,10 +492,9 @@ class Dataset(list, SimpleLoggerTrait):
     def __init__(self, 
                  data_home=None,
                  download_if_missing=True,
-                 frame_scale_factor=None):
-                 # shuffle=False,
-                 # random_state=0,
-                 # 
+                 frame_scale_factor=None,
+                 shuffle=False,
+                 random_state=None):
         self.data_home = get_data_home(data_home=data_home)
         self.download_if_missing = download_if_missing
 
@@ -514,6 +515,9 @@ class Dataset(list, SimpleLoggerTrait):
         self._info('Loading frames metadata from %s' % (frames_metadata_path, ))
         self._rawdata = pd.read_csv(frames_metadata_path)
 
+        if shuffle:
+            self._rawdata = self._rawdata.sample(frac=1, axis=0, random_state=random_state).reset_index(drop=True)
+
         for _rid, rseries in self._rawdata.iterrows():
             dfi_dict = {}
             # Copy content
@@ -523,6 +527,8 @@ class Dataset(list, SimpleLoggerTrait):
             dfi_dict["image_path_absolute"] = os.path.join(
                     self.framesdir, rseries["image_path"])  # string (path)
             dfi_dict["_scale_factor"] = self._scale_factor  # float
+            # dfi_dict["frame_uid"] = rid  # int  # does not survive shuffling
+            # hint: use df.reindex(np.random.permutation(df.index)) and keep original uids
             # Store
             self.append(Frame(dfi_dict))
         
@@ -710,3 +716,6 @@ class Models(list, SimpleLoggerTrait):
             self._unique_modeltype_ids.sort()
         return self._unique_modeltype_ids
 
+    def iter_model_images(self, color=False, scale_factor=None):
+        for mdl in self:
+            yield mdl.read_image(color, scale_factor)
