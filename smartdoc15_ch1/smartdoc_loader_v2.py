@@ -380,8 +380,8 @@ def _ensure_dataset_is_downloaded(sd15ch1_home, download_if_missing):
             tarfile.open(archive_path, "r:gz").extractall(path=data_folder_path)
             os.remove(archive_path)
             # Touch indicator file
-            with open(install_successful_filename, 'a'):
-                os.utime(install_successful_filename, times=None)
+            with open(install_successful_filename, 'a') as f:
+                f.write("OK\n")
 
 
 def _read_image(full_path, color=False, scale_factor=None):

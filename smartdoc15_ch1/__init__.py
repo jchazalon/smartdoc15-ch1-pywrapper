@@ -1,7 +1,7 @@
 
 
 # This is the place where the version is defined.
-__version__ = "0.7"
+__version__ = "0.8"
 
 
 from .smartdoc_loader_v2 import Dataset, Models
