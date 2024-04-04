@@ -250,10 +250,10 @@ import warnings
 
 import numpy as np
 import pandas as pd
+from sklearn.datasets import *
 from sklearn.datasets.base import get_data_home, _fetch_remote, RemoteFileMetadata
 from skimage.io import imread
 from skimage.transform import resize as imresize
-
 
 # CONSTANTS
 ################################################################################
