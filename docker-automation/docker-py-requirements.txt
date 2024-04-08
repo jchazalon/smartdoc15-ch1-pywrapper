@@ -4,6 +4,6 @@ Pillow==5.0
 Polygon2>=2.0
 scikit-image==0.13
 scikit-learn==0.20.4
-scipy==1.0
+scipy==1.11.1
 six>=1.0
 scikit-datasets>=0.2
