@@ -1,4 +1,4 @@
-numpy==1.11
+numpy==1.22.0
 pandas==0.22
 Pillow==5.0
 Polygon2>=2.0
