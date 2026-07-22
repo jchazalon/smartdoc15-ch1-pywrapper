@@ -1,3 +1,5 @@
+*⚠️ This project is unmaintained and may have unfixed security issues. Use only on trusted data.*
+
 Python wrapper for the SmartDoc 2015 - Challenge 1 Dataset
 ==========================================================
 
